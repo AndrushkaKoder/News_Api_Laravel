@@ -3,18 +3,24 @@
 namespace App\Console\Commands\News;
 
 use App\Models\Author;
-use App\Models\News;
 use App\Models\Source;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class NewsMaker
 {
-	public function make(): void
+	public function make(): bool
 	{
-		$response = $this->request($this->getUri());
-		$this->saveNews(
-			json_decode($response->getBody()->getContents(), true)
-		);
+		try {
+			$response = $this->request($this->getUri());
+			$this->saveNews(
+				json_decode($response->getBody()->getContents(), true)
+			);
+			return true;
+		} catch (\Exception $exception) {
+			Log::info($exception->getMessage());
+			return false;
+		}
 	}
 
 	private function getUri(): string
@@ -52,7 +58,8 @@ class NewsMaker
 				'name' => $newsContent['source']['name'] ?? 'unknown'
 			]);
 
-			News::query()->create([
+			/**@var Author $author * */
+			$author->news()->create([
 				'title' => $newsContent['title'],
 				'description' => $newsContent['description'],
 				'text' => $newsContent['content'],

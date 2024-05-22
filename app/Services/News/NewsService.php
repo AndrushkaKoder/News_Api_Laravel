@@ -2,6 +2,7 @@
 
 namespace App\Services\News;
 
+use App\Console\Commands\News\Translator;
 use App\Http\Resources\NewsResource;
 use App\Models\Author;
 use App\Models\News;
@@ -63,5 +64,16 @@ class NewsService
 	{
 		$news->delete();
 		return responseOk();
+	}
+
+	public function getLastNews()
+	{
+		$news = News::query()
+			->orderBy('id', 'desc')
+			->take(90)
+			->get();
+
+		$news = $news->shuffle()->take(5);
+		return $news->map(fn($news) => Translator::translateText($news->title));
 	}
 }

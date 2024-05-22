@@ -18,8 +18,8 @@ class CreateNewsTable extends Migration
 			$table->string('title');
 			$table->text('description');
 			$table->longText('text')->nullable();
-			$table->string('url')->nullable();
-			$table->string('image')->nullable();
+			$table->text('url')->nullable();
+			$table->text('image')->nullable();
 			$table->string('publishedAt')->nullable()->default(null);
 			$table->unsignedBigInteger('author_id')->nullable();
 			$table->unsignedBigInteger('source_id')->nullable();

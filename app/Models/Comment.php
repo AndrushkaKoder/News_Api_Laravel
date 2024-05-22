@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
@@ -12,7 +13,7 @@ class Comment extends Model
 		'user'
 	];
 
-	public function news(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+	public function news(): BelongsTo
 	{
 		return $this->belongsTo(News::class, 'news_id');
 	}

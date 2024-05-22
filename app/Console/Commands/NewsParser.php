@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\News\NewsMaker;
-use App\Console\Commands\News\NewsParserLogger;
+use App\Console\Commands\News\NewsNotificator;
 use App\Models\Author;
 use App\Models\News;
 use App\Models\Source;
@@ -21,8 +21,17 @@ class NewsParser extends Command
 			exit();
 		}
 
-		(new NewsMaker())->make();
-		NewsParserLogger::writeInLog('Новости успешно добавлены');
+		$maker = (new NewsMaker())->make();
+
+		(new NewsNotificator())
+			->setStatus($maker ? NewsNotificator::STATUS_OK : NewsNotificator::STATUS_FAIL)
+			->notify();
+
+		if ($maker) {
+			$this->info('Success parse');
+		} else {
+			$this->error('Error parse. Check log.');
+		}
 	}
 
 	private function clearTables(): void
